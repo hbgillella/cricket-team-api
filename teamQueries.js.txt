@@ -1,0 +1,34 @@
+const Team = require('../models/teamModel');
+
+// 1. Find all players from a specific team
+const findPlayersByTeam = async (teamName) => {
+  const team = await Team.findOne({ teamName });
+  return team ? team.players : [];
+};
+
+// 2. Find the team with the highest win percentage
+const findTeamWithHighestWinPercentage = async () => {
+  return await Team.aggregate([
+    {
+      $addFields: { winPercentage: { $multiply: [{ $divide: ['$wins', '$matchesPlayed'] }, 100] } }
+    },
+    { $sort: { winPercentage: -1 } },
+    { $limit: 1 }
+  ]);
+};
+
+// 3. Find all players with more than 100 matches played
+const findPlayersWithMoreThan100Matches = async () => {
+  return await Team.aggregate([
+    { $unwind: '$players' },
+    { $match: { 'players.matchesPlayed': { $gt: 100 } } },
+    { $project: { _id: 0, 'players.name': 1, 'players.matchesPlayed': 1, 'teamName': 1 } }
+  ]);
+};
+
+// Other queries can be added similarly...
+module.exports = {
+  findPlayersByTeam,
+  findTeamWithHighestWinPercentage,
+  findPlayersWithMoreThan100Matches
+};

@@ -1,0 +1,19 @@
+const { findPlayersByTeam, findTeamWithHighestWinPercentage, findPlayersWithMoreThan100Matches } = require('../queries/teamQueries');
+
+const getPlayersByTeam = async (req, res) => {
+  const teamName = req.params.teamName;
+  const players = await findPlayersByTeam(teamName);
+  res.json(players);
+};
+
+const getTeamWithHighestWinPercentage = async (req, res) => {
+  const team = await findTeamWithHighestWinPercentage();
+  res.json(team);
+};
+
+// More controller functions...
+
+module.exports = {
+  getPlayersByTeam,
+  getTeamWithHighestWinPercentage
+};
